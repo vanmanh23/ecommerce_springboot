@@ -4,6 +4,7 @@ import com.manh.ecommerce_java.dtos.BaseResponse;
 import com.manh.ecommerce_java.dtos.DataTableResponseDTO;
 import com.manh.ecommerce_java.dtos.UserFilterRequestDTO;
 import com.manh.ecommerce_java.dtos.UserRequestDTO;
+import com.manh.ecommerce_java.exceptions.ResourceNotFoundException;
 import com.manh.ecommerce_java.models.Role;
 import com.manh.ecommerce_java.models.User;
 import com.manh.ecommerce_java.repositories.UserRepository;
@@ -62,5 +63,8 @@ public class UserService {
         } else {
             throw new Exception("Email" + userRequestDTO.getEmail() + "existed");
         }
+    }
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found with email: " +email));
     }
 }
