@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,7 +32,11 @@ public class RefreshTokenService {
             refreshToken.setUser(user);
         }
         refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setExpiryDate(Instant.now().plus(Duration.ofDays(7)));
         return refreshTokenRepository.save(refreshToken);
+    }
+    public Optional<RefreshToken> findByToken(String token) {
+        return refreshTokenRepository.findByToken(token);
     }
     @Transactional
     public void revokeRefreshToken(String refreshToken) {
