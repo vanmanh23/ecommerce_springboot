@@ -6,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -37,4 +35,7 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL , fetch = FetchType.LAZY)
     private Set<RefreshToken> refreshTokens = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL , fetch = FetchType.LAZY)
+    private List<Order> orders = new ArrayList<>();
 }
