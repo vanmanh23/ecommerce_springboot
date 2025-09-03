@@ -7,6 +7,7 @@ import com.manh.ecommerce_java.exceptions.ResourceNotFoundException;
 import com.manh.ecommerce_java.models.Order;
 import com.manh.ecommerce_java.models.User;
 import com.manh.ecommerce_java.repositories.OrderRepository;
+import com.trackingmore.model.tracking.Tracking;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -28,6 +30,8 @@ public class OrderService {
     private ProductService productService;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private TrackingShipmentService shipmentService;
     public DataTableResponseDTO<Order> getAllOrders(OrderFilterRequestDTO orderFilterRequestDTO) {
         Sort sortByAndOrder = orderFilterRequestDTO.getSortOrder().equalsIgnoreCase("asc")
                 ? Sort.by(orderFilterRequestDTO.getSortBy()).ascending()
@@ -89,4 +93,24 @@ public class OrderService {
         orderRepository.delete(existingOrder);
     }
 
+
+    public void updateAllOrderStatusFromTracking() {
+        List<Order> orders = orderRepository.findAllByOrderNotInStatus(Arrays.asList("delivered", "canceled"));
+        System.out.println("------" + orders);
+        for (Order order : orders) {
+            if (order.getTrackingNumber() != null) {
+                Tracking tracking = shipmentService.getTrackingByTrackingNumber(order.getTrackingNumber());
+                order.setOrderStatus(tracking.getDeliveryStatus());
+                orderRepository.save(order);
+            }
+        }
+    }
+
+    public String updateTrackingNumberForOrder(int orderId, String trackingNumber, String courierCode) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
+        order.setTrackingNumber(trackingNumber);
+        orderRepository.save(order);
+        shipmentService.createTracking(trackingNumber, courierCode);
+        return "update tracking-number success";
+    }
 }
