@@ -124,6 +124,7 @@
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
 						</exclude>
+						<exclude>application.properties</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
