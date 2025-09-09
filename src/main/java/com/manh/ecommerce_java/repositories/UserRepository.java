@@ -16,6 +16,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
     Page<User> findAll(Specification<User> spec, Pageable pageable);
-    @Query("SELECT e FROM User e WHERE e.email LIKE  %:email% ")
-    Optional<User> findByEmail(@Param("email") String email);
+//    @Query("SELECT e FROM User e WHERE e.email LIKE  %:email% ")
+//    Optional<User> findByEmail(@Param("email") String email);
+    Optional<User> findByEmail(String email);
 }

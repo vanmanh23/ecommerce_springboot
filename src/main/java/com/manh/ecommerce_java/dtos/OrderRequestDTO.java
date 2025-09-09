@@ -24,8 +24,7 @@ public class OrderRequestDTO {
     private String orderStatus;
 
     @NotNull
-    private Integer paymentMethodId;
-
+    private UUID paymentMethodId;
 
     private EPaymentStatus paymentStatus;
 

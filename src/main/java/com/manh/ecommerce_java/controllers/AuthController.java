@@ -54,14 +54,18 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<BaseResponse> loginHandler(@Valid @RequestBody LoginRequestDTO credentials) {
-        UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
-                credentials.getEmail(), credentials.getPassword());
-        authenticationManager.authenticate(authCredentials);
-        // UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(credentials.getEmail());
+//        UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
+//                credentials.getEmail(), credentials.getPassword());
+//        authenticationManager.authenticate(authCredentials);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        credentials.getEmail(), credentials.getPassword()
+                )
+        );
+//         UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(credentials.getEmail());
         User user = userService.getUserByEmail(credentials.getEmail());
         // Create a AccessToken
         String token = jwtUtil.generateToken(credentials.getEmail());
-
         // Create a RefreshToken
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 

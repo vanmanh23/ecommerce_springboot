@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mail Template</title>
+</head>
+<body>
+<h1>Bạn đã đặt hàng thành công</h1>
+<h2>Đơn đặt hàng chi tiết của bạn là:</h2>
+<p th:text="${data.nameReceiver}"></p>
+<p th:text="${data.phoneReceiver}"></p>
+<p th:text="${data.addressReceiver}"></p>
+<!--<p th:text="${data.orderDetails}"></p>-->
+</body>
+</html>

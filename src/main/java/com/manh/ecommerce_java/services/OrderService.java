@@ -5,6 +5,7 @@ import com.manh.ecommerce_java.dtos.OrderFilterRequestDTO;
 import com.manh.ecommerce_java.dtos.OrderRequestDTO;
 import com.manh.ecommerce_java.exceptions.ResourceNotFoundException;
 import com.manh.ecommerce_java.models.Order;
+import com.manh.ecommerce_java.models.PaymentMethod;
 import com.manh.ecommerce_java.models.User;
 import com.manh.ecommerce_java.repositories.OrderRepository;
 import com.trackingmore.model.tracking.Tracking;
@@ -32,6 +33,10 @@ public class OrderService {
     private ModelMapper modelMapper;
     @Autowired
     private TrackingShipmentService shipmentService;
+    @Autowired
+    private PaymentMethodService paymentMethodService;
+    @Autowired
+    private EmailService emailService;
     public DataTableResponseDTO<Order> getAllOrders(OrderFilterRequestDTO orderFilterRequestDTO) {
         Sort sortByAndOrder = orderFilterRequestDTO.getSortOrder().equalsIgnoreCase("asc")
                 ? Sort.by(orderFilterRequestDTO.getSortBy()).ascending()
@@ -64,11 +69,14 @@ public class OrderService {
 
     public Order createOrder(OrderRequestDTO orderRequestDTO) throws Exception {
         User user = userService.getUserById(orderRequestDTO.getUserId());
+        PaymentMethod paymentMethod = paymentMethodService.findPaymentMethodById(orderRequestDTO.getPaymentMethodId());
         Order order = modelMapper.map(orderRequestDTO, Order.class);
         order.setUser(user);
+        order.setPaymentMethod(paymentMethod);
         order.setCreatedAt(LocalDateTime.now());
         Order newOrder = orderRepository.save(order);
 
+        emailService.sendEmailFromTemplate(newOrder.getUser().getEmail(), "mail-order", "Bạn đã đặt hàng thành công từ shop HLN", newOrder);
         return newOrder;
     }
 

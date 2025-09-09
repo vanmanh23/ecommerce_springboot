@@ -69,4 +69,9 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @ManyToOne( fetch = FetchType.EAGER)
+    @NotNull(message = "{error.order.paymentMethod.null}")
+    @JoinColumn(name = "paymentMethod_id", referencedColumnName = "id", nullable = false)
+    private PaymentMethod paymentMethod;
+
 }
